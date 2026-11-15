@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import { RequireRole } from '../../auth/RouteGuards';
 import { CustomerAppearance } from '../../components/account/CustomerAppearance';
 import { CUSTOMER_SECTIONS } from '../../components/account/CustomerSections';
-import { AppShell } from '../../components/AppShell';
+import { useScreenTitle } from '../../components/AppShell';
 import { Card } from '../../components/ui';
 
 const SECTIONS = {
@@ -26,11 +26,10 @@ export default function AccountSectionScreen() {
 }
 
 function NotFoundSection() {
+  useScreenTitle('Account');
   return (
-    <AppShell title="Account">
-      <Card>
-        <Text>That account section does not exist.</Text>
-      </Card>
-    </AppShell>
+    <Card>
+      <Text>That account section does not exist.</Text>
+    </Card>
   );
 }

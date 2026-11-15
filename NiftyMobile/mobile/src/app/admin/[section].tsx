@@ -1,7 +1,7 @@
 import { useLocalSearchParams } from 'expo-router';
 import { Text } from 'react-native';
 import { RequireRole } from '../../auth/RouteGuards';
-import { AppShell } from '../../components/AppShell';
+import { useScreenTitle } from '../../components/AppShell';
 import {
   AdminAuditLog,
   AdminFeedback,
@@ -44,11 +44,10 @@ export default function AdminSectionScreen() {
 }
 
 function NotFoundSection() {
+  useScreenTitle('Admin');
   return (
-    <AppShell title="Admin">
-      <Card>
-        <Text>That admin section does not exist.</Text>
-      </Card>
-    </AppShell>
+    <Card>
+      <Text>That admin section does not exist.</Text>
+    </Card>
   );
 }

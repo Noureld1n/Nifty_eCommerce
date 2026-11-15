@@ -19,7 +19,7 @@ import {
   wishlistApi,
 } from '../../api/customerCommerceApi';
 import { useSession } from '../../auth/useSession';
-import { AppShell } from '../AppShell';
+import { useScreenTitle } from '../AppShell';
 import { Pagination } from '../Pagination';
 import { SelectField } from '../SelectField';
 import {
@@ -48,11 +48,12 @@ function CustomerFrame({
   children,
 }: PropsWithChildren<{ title: string; subtitle: string }>) {
   const styles = useStyles();
+  useScreenTitle(title);
   return (
-    <AppShell title={title}>
+    <>
       <Text style={styles.subtitle}>{subtitle}</Text>
       {children}
-    </AppShell>
+    </>
   );
 }
 

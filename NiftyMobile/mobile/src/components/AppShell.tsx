@@ -1,5 +1,7 @@
 import {
+  createContext,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -20,7 +22,6 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
-  useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
 import { useSession } from '../auth/useSession';
@@ -40,12 +41,21 @@ import { Alert, Button } from './ui';
 
 /* eslint-disable react-hooks/immutability */
 
-let liveShells = 0;
+const AppShellTitleContext = createContext<(title: string) => void>(() => {});
+
+/** Call this inside any page screen to update the persistent shell's title. */
+export function useScreenTitle(title: string) {
+  const setTitle = useContext(AppShellTitleContext);
+  useEffect(() => {
+    setTitle(title);
+  }, [title, setTitle]);
+}
 
 export function AppShell({
-  title,
+  title: initialTitle = '',
   children,
-}: PropsWithChildren<{ title: string }>) {
+}: PropsWithChildren<{ title?: string }>) {
+  const [title, setTitle] = useState(initialTitle);
   const { user, notice, setNotice, logout } = useSession();
   const { theme } = useAppTheme();
   const pathname = usePathname();
@@ -149,87 +159,74 @@ export function AppShell({
     ],
   );
 
-  // FIX: Keep stageOpacity starting at 0 so freshly mounted screens stay invisible
-  // for the 1st native layout frame until the wheel transform positions them off-screen.
-  const stageOpacity = useSharedValue(0);
-  useEffect(() => {
-    stageOpacity.value = 1;
-  }, [stageOpacity]);
-
-  useEffect(() => {
-    liveShells += 1;
-    console.log(`[AppShell] mounted. Live screens: ${liveShells}`);
-    return () => {
-      liveShells -= 1;
-      console.log(`[AppShell] unmounted. Live screens: ${liveShells}`);
-    };
-  }, []);
-
+  // Because AppShell stays permanently mounted, turn.value is ALWAYS valid
+  // (never resets to 0 on route change), so we don't need stageOpacity hacks.
   const pageStyle = useAnimatedStyle(() => ({
-    opacity: stageOpacity.value,
     transform: getWheelTransform(turn.value, radius, angle),
   }));
 
   return (
-    <View style={styles.root}>
-      <SafeAreaView
-        style={styles.safeArea}
-        edges={['top', 'left', 'right', 'bottom']}
-      >
-        <View style={styles.accent}>
-          <View style={styles.accentLeaf} />
-          <View style={styles.accentSky} />
-        </View>
-        <View style={styles.header}>
-          <Pressable
-            accessibilityRole="link"
-            accessibilityLabel="Nifty home"
-            onPress={() => navigateToTab('/shop')}
-          >
-            <BrandLogo size={40} />
-          </Pressable>
-          {user ? (
-            <View style={styles.userActions}>
-              <View style={styles.identityWrap}>
-                <Text style={styles.identity} numberOfLines={1}>
-                  {user.firstName} {user.lastName}
-                </Text>
-                <Text style={styles.role}>
-                  {user.role === 'ROLE_ADMIN' ? 'ADMIN' : 'CUSTOMER'}
-                </Text>
-              </View>
-              <Button
-                title="Log out"
-                variant="ghost"
-                onPress={() => void logout()}
-              />
-            </View>
-          ) : null}
-        </View>
-
-        <GestureDetector gesture={pageGesture}>
-          <View style={styles.stageClip} onLayout={onStageLayout}>
-            <Animated.View style={[styles.stage, pageStyle]}>
-              <ScrollView
-                style={styles.scroll}
-                contentContainerStyle={styles.content}
-                keyboardShouldPersistTaps="handled"
-              >
-                {notice ? (
-                  <Alert tone="info" onDismiss={() => setNotice('')}>
-                    {notice}
-                  </Alert>
-                ) : null}
-                <Text style={styles.screenTitle}>{title}</Text>
-                {children}
-              </ScrollView>
-            </Animated.View>
+    <AppShellTitleContext.Provider value={setTitle}>
+      <View style={styles.root}>
+        <SafeAreaView
+          style={styles.safeArea}
+          edges={['top', 'left', 'right', 'bottom']}
+        >
+          <View style={styles.accent}>
+            <View style={styles.accentLeaf} />
+            <View style={styles.accentSky} />
           </View>
-        </GestureDetector>
+          <View style={styles.header}>
+            <Pressable
+              accessibilityRole="link"
+              accessibilityLabel="Nifty home"
+              onPress={() => navigateToTab('/shop')}
+            >
+              <BrandLogo size={40} />
+            </Pressable>
+            {user ? (
+              <View style={styles.userActions}>
+                <View style={styles.identityWrap}>
+                  <Text style={styles.identity} numberOfLines={1}>
+                    {user.firstName} {user.lastName}
+                  </Text>
+                  <Text style={styles.role}>
+                    {user.role === 'ROLE_ADMIN' ? 'ADMIN' : 'CUSTOMER'}
+                  </Text>
+                </View>
+                <Button
+                  title="Log out"
+                  variant="ghost"
+                  onPress={() => void logout()}
+                />
+              </View>
+            ) : null}
+          </View>
 
-        <RoleNavigation role={role} onNavigate={navigateToTab} />
-      </SafeAreaView>
-    </View>
+          <GestureDetector gesture={pageGesture}>
+            <View style={styles.stageClip} onLayout={onStageLayout}>
+              <Animated.View style={[styles.stage, pageStyle]}>
+                <ScrollView
+                  style={styles.scroll}
+                  contentContainerStyle={styles.content}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  {notice ? (
+                    <Alert tone="info" onDismiss={() => setNotice('')}>
+                      {notice}
+                    </Alert>
+                  ) : null}
+                  {title ? <Text style={styles.screenTitle}>{title}</Text> : null}
+                  {children}
+                </ScrollView>
+              </Animated.View>
+            </View>
+          </GestureDetector>
+
+          <RoleNavigation role={role} onNavigate={navigateToTab} />
+        </SafeAreaView>
+      </View>
+    </AppShellTitleContext.Provider>
   );
 }
 

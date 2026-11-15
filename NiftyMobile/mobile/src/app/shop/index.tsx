@@ -4,7 +4,7 @@ import { useSession } from '../../auth/useSession';
 import type { Category, Product, Promotion, WishlistItem } from '../../api/commerceTypes';
 import { catalogApi } from '../../api/catalogApi';
 import { wishlistApi } from '../../api/customerCommerceApi';
-import { AppShell } from '../../components/AppShell';
+import { useScreenTitle } from '../../components/AppShell';
 import { Pagination } from '../../components/Pagination';
 import { ProductCard } from '../../components/ProductCard';
 import { SelectField } from '../../components/SelectField';
@@ -140,6 +140,8 @@ export default function ShopScreen() {
       : productPage.items;
   }, [productPage.items, search]);
 
+  useScreenTitle('Shop');
+
   async function toggleWishlist(product: Product) {
     const key = String(product.id);
     const saved = wishlistOverrides[key] ?? wishlistedIds.has(key);
@@ -172,7 +174,7 @@ export default function ShopScreen() {
   }
 
   return (
-    <AppShell title="Shop">
+    <>
       <View style={styles.hero}>
         <Text style={styles.kicker}>WELCOME TO NIFTY</Text>
         <PageTitle
@@ -320,7 +322,7 @@ export default function ShopScreen() {
           />
         ) : null}
       </View>
-    </AppShell>
+    </>
   );
 }
 

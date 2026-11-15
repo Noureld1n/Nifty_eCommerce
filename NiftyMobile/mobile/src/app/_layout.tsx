@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Platform, StyleSheet, View } from 'react-native';
@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SessionProvider } from '../auth/SessionProvider';
 import { PageWheelTransitionProvider } from '../PageWheelTransition';
 import { ThemeProvider, useAppTheme } from '../ThemeProvider';
+import { AppShell } from '../components/AppShell'; // Adjust path if AppShell is inside a components folder (e.g. '../components/AppShell')
 
 export default function RootLayout() {
   return (
@@ -41,13 +42,9 @@ function ThemedNavigation() {
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
       <StatusBar style={theme.scheme === 'dark' ? 'light' : 'dark'} />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          animation: 'none',
-          contentStyle: { backgroundColor: background },
-        }}
-      />
+      <AppShell>
+        <Slot />
+      </AppShell>
     </View>
   );
 }

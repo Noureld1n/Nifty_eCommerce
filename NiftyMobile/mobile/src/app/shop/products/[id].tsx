@@ -9,7 +9,7 @@ import {
   wishlistApi,
 } from '../../../api/customerCommerceApi';
 import type { ProductReview, ProductVariant } from '../../../api/commerceTypes';
-import { AppShell } from '../../../components/AppShell';
+import { useScreenTitle } from '../../../components/AppShell';
 import { Pagination } from '../../../components/Pagination';
 import { SelectField } from '../../../components/SelectField';
 import {
@@ -157,6 +157,9 @@ export default function ProductDetailScreen() {
     isCustomer &&
     Boolean(selectedVariant?.active && selectedVariant.stockQuantity > 0);
 
+  const pageTitle = product?.name ?? 'Product';
+  useScreenTitle(pageTitle);
+
   async function toggleWishlist() {
     if (!product || id === null) {
       return;
@@ -274,10 +277,8 @@ export default function ProductDetailScreen() {
     }
   }
 
-  const pageTitle = product?.name ?? 'Product';
-
   return (
-    <AppShell title={pageTitle}>
+    <>
       <Button
         title="Back to shop"
         variant="ghost"
@@ -418,10 +419,10 @@ export default function ProductDetailScreen() {
                   {!selectedVariant.active
                     ? 'Currently unavailable'
                     : selectedVariant.stockQuantity > 0
-                      ? selectedVariant.stockQuantity <= 5
-                        ? `Only ${selectedVariant.stockQuantity} left`
-                        : 'In stock'
-                      : 'Out of stock'}
+                    ? selectedVariant.stockQuantity <= 5
+                      ? `Only ${selectedVariant.stockQuantity} left`
+                      : 'In stock'
+                    : 'Out of stock'}
                 </Text>
               ) : null}
               {typeDetails.length ? (
@@ -635,160 +636,160 @@ export default function ProductDetailScreen() {
           </View>
         </>
       ) : null}
-    </AppShell>
+    </>
   );
 }
 
 function createStyles(theme: ReturnType<typeof useAppTheme>['theme']) {
   return StyleSheet.create({
-  product: {
-    gap: 20,
-  },
-  gallery: {
-    gap: 10,
-  },
-  mainImage: {
-    height: 330,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: theme.radius.card,
-    backgroundColor: theme.colors.infoBackground,
-  },
-  imagePlaceholder: {
-    color: theme.colors.skyDeep,
-    fontSize: 64,
-    fontWeight: '800',
-  },
-  thumbnails: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  thumbnail: {
-    width: 64,
-    height: 64,
-    overflow: 'hidden',
-    borderWidth: 2,
-    borderColor: 'transparent',
-    borderRadius: 12,
-  },
-  thumbnailSelected: {
-    borderColor: theme.colors.leafDeep,
-  },
-  thumbnailImage: {
-    width: '100%',
-    height: '100%',
-  },
-  info: {
-    gap: 12,
-  },
-  kicker: {
-    color: theme.colors.leafDeep,
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-  },
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    gap: 10,
-  },
-  price: {
-    color: theme.colors.ink,
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  regularPrice: {
-    color: theme.colors.muted,
-    textDecorationLine: 'line-through',
-  },
-  offer: {
-    color: theme.colors.success,
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  description: {
-    color: theme.colors.text,
-    fontSize: 15,
-    lineHeight: 23,
-  },
-  stock: {
-    color: theme.colors.success,
-    fontWeight: '700',
-  },
-  outOfStock: {
-    color: theme.colors.danger,
-    fontWeight: '700',
-  },
-  facts: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: theme.colors.line,
-  },
-  fact: {
-    paddingVertical: 9,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: theme.colors.line,
-  },
-  factLabel: {
-    flex: 1,
-    color: theme.colors.muted,
-    fontSize: 13,
-  },
-  factValue: {
-    flex: 1,
-    color: theme.colors.text,
-    fontSize: 13,
-    textAlign: 'right',
-  },
-  section: {
-    gap: 14,
-  },
-  label: {
-    color: theme.colors.text,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  rating: {
-    color: theme.colors.leafDeep,
-    fontWeight: '700',
-  },
-  ratingChoices: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  ratingChoice: {
-    minHeight: 40,
-    paddingHorizontal: 12,
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: theme.colors.line,
-    borderRadius: theme.radius.pill,
-  },
-  ratingChoiceSelected: {
-    borderColor: theme.colors.leafDeep,
-    backgroundColor: theme.colors.successBackground,
-  },
-  ratingChoiceText: {
-    color: theme.colors.text,
-    fontWeight: '600',
-  },
-  reviewHeader: {
-    color: theme.colors.leafDeep,
-    fontWeight: '700',
-  },
-  reviewTitle: {
-    color: theme.colors.ink,
-    fontSize: 17,
-    fontWeight: '700',
-  },
-  muted: {
-    color: theme.colors.muted,
-    fontSize: 14,
-  },
+    product: {
+      gap: 20,
+    },
+    gallery: {
+      gap: 10,
+    },
+    mainImage: {
+      height: 330,
+      overflow: 'hidden',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: theme.radius.card,
+      backgroundColor: theme.colors.infoBackground,
+    },
+    imagePlaceholder: {
+      color: theme.colors.skyDeep,
+      fontSize: 64,
+      fontWeight: '800',
+    },
+    thumbnails: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    thumbnail: {
+      width: 64,
+      height: 64,
+      overflow: 'hidden',
+      borderWidth: 2,
+      borderColor: 'transparent',
+      borderRadius: 12,
+    },
+    thumbnailSelected: {
+      borderColor: theme.colors.leafDeep,
+    },
+    thumbnailImage: {
+      width: '100%',
+      height: '100%',
+    },
+    info: {
+      gap: 12,
+    },
+    kicker: {
+      color: theme.colors.leafDeep,
+      fontSize: 12,
+      fontWeight: '700',
+      textTransform: 'uppercase',
+    },
+    priceRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      gap: 10,
+    },
+    price: {
+      color: theme.colors.ink,
+      fontSize: 22,
+      fontWeight: '800',
+    },
+    regularPrice: {
+      color: theme.colors.muted,
+      textDecorationLine: 'line-through',
+    },
+    offer: {
+      color: theme.colors.success,
+      fontSize: 13,
+      fontWeight: '600',
+    },
+    description: {
+      color: theme.colors.text,
+      fontSize: 15,
+      lineHeight: 23,
+    },
+    stock: {
+      color: theme.colors.success,
+      fontWeight: '700',
+    },
+    outOfStock: {
+      color: theme.colors.danger,
+      fontWeight: '700',
+    },
+    facts: {
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: theme.colors.line,
+    },
+    fact: {
+      paddingVertical: 9,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: 12,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: theme.colors.line,
+    },
+    factLabel: {
+      flex: 1,
+      color: theme.colors.muted,
+      fontSize: 13,
+    },
+    factValue: {
+      flex: 1,
+      color: theme.colors.text,
+      fontSize: 13,
+      textAlign: 'right',
+    },
+    section: {
+      gap: 14,
+    },
+    label: {
+      color: theme.colors.text,
+      fontSize: 14,
+      fontWeight: '600',
+    },
+    rating: {
+      color: theme.colors.leafDeep,
+      fontWeight: '700',
+    },
+    ratingChoices: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    ratingChoice: {
+      minHeight: 40,
+      paddingHorizontal: 12,
+      justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: theme.colors.line,
+      borderRadius: theme.radius.pill,
+    },
+    ratingChoiceSelected: {
+      borderColor: theme.colors.leafDeep,
+      backgroundColor: theme.colors.successBackground,
+    },
+    ratingChoiceText: {
+      color: theme.colors.text,
+      fontWeight: '600',
+    },
+    reviewHeader: {
+      color: theme.colors.leafDeep,
+      fontWeight: '700',
+    },
+    reviewTitle: {
+      color: theme.colors.ink,
+      fontSize: 17,
+      fontWeight: '700',
+    },
+    muted: {
+      color: theme.colors.muted,
+      fontSize: 14,
+    },
   });
 }
