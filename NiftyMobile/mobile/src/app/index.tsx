@@ -1,40 +1,46 @@
-import { StyleSheet, View } from 'react-native';
-import WheelPager, {
-  WheelPage,
-} from '../components/wheel/WheelPager';
+import { useEffect, useMemo } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import { useSession } from '../auth/useSession';
+import { Alert, Button, LoadingState } from '../components/ui';
+import { useAppTheme } from '../ThemeProvider';
 
-const pages: WheelPage[] = [
-  {
-    id: '01',
-    title: 'Discover',
-    description: 'Explore something new.',
-    backgroundColor: '#312E81',
-  },
-  {
-    id: '02',
-    title: 'Explore',
-    description: 'Find what interests you.',
-    backgroundColor: '#065F46',
-  },
-  {
-    id: '03',
-    title: 'Create',
-    description: 'Bring your ideas to life.',
-    backgroundColor: '#9A3412',
-  },
-];
+export default function IndexScreen() {
+  const { theme } = useAppTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { status, user, bootError, retryRestore } = useSession();
+  const role = user?.role;
 
-export default function HomeScreen() {
-  return (
-    <View style={styles.container}>
-      <WheelPager pages={pages} />
-    </View>
-  );
+  useEffect(() => {
+    if (status === 'authenticated' && role) {
+      router.replace(
+        role === 'ROLE_ADMIN' ? '/admin/analytics' : '/shop',
+      );
+    } else if (status === 'anonymous') {
+      router.replace('/shop');
+    }
+  }, [status, role]);
+
+  if (status === 'error') {
+    return (
+      <View style={styles.error}>
+        <Alert tone="error">{bootError ?? 'Unable to restore your session.'}</Alert>
+        <Button title="Try again" onPress={() => void retryRestore()} />
+      </View>
+    );
+  }
+
+  return <LoadingState label="Starting Nifty" />;
 }
 
-const styles = StyleSheet.create({
-  container: {
+function makeStyles(theme: ReturnType<typeof useAppTheme>['theme']) {
+  return StyleSheet.create({
+  error: {
     flex: 1,
-    backgroundColor: '#000000',
+    justifyContent: 'center',
+    padding: theme.spacing.screen,
+    gap: theme.spacing.section,
+    backgroundColor: theme.colors.background,
   },
-});
+  });
+}

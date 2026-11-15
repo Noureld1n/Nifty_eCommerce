@@ -42,8 +42,12 @@ import com.newtin.eco.service.ProductReviewService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -103,8 +107,26 @@ class EcoApplicationTests {
 	@Autowired
 	private AddressRepository addressRepository;
 
+	@Autowired
+	@Qualifier("corsSource")
+	private CorsConfigurationSource corsConfigurationSource;
+
 	@Test
 	void contextLoads() {
+	}
+
+	@Test
+	void corsAllowsExpoWebDevelopmentOrigins() {
+		var request = new MockHttpServletRequest();
+		request.setRequestURI("/api/public/auth/refresh");
+		CorsConfiguration cors = corsConfigurationSource.getCorsConfiguration(request);
+
+		Assertions.assertNotNull(cors);
+		Assertions.assertEquals("http://localhost:8081",
+				cors.checkOrigin("http://localhost:8081"));
+		Assertions.assertEquals("http://127.0.0.1:8081",
+				cors.checkOrigin("http://127.0.0.1:8081"));
+		Assertions.assertNull(cors.checkOrigin("http://localhost:8082"));
 	}
 
 	@Test

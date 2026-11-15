@@ -2,7 +2,6 @@ package com.newtin.eco.service;
 
 import com.newtin.eco.dto.response.WishListItemResponse;
 import com.newtin.eco.exception.ResourceNotFoundException;
-import com.newtin.eco.model.Customer;
 import com.newtin.eco.model.Product;
 import com.newtin.eco.model.WishListItem;
 import com.newtin.eco.repository.CustomerRepository;
