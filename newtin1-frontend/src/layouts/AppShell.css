@@ -1,0 +1,40 @@
+.shell { min-height: 100dvh; }
+.shell__main { width: min(100% - 2rem, 78rem); margin-inline: auto; }
+.shell__main { padding: 2rem 0 4rem; }
+.shell__page { display: grid; gap: 1.5rem; align-content: start; animation: page-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@keyframes page-in { from { opacity: 0; transform: translateY(14px); filter: blur(4px); } to { opacity: 1; transform: none; filter: blur(0); } }
+/* sections inside a page drift in one after another */
+.shell__page > * { animation: page-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.shell__page > :nth-child(2) { animation-delay: 0.06s; }
+.shell__page > :nth-child(3) { animation-delay: 0.12s; }
+.shell__page > :nth-child(4) { animation-delay: 0.18s; }
+.shell__page > :nth-child(n+5) { animation-delay: 0.22s; }
+@media (max-width: 38rem) {
+  .shell__main { width: min(100% - 1.25rem, 78rem); }
+}
+.page-head { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.25rem; }
+.page-head h1 { font-size: clamp(1.6rem, 4vw, 2.1rem); }
+.page-head p { color: var(--muted); }
+.page-head__text { display: grid; gap: 0.25rem; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem 1rem; }
+.toolbar .field { min-width: 14rem; }
+.toolbar select { min-height: 2.9rem; padding: 0.5rem 0.9rem; background: var(--surface); border: 1.5px solid var(--line-strong); border-radius: 12px; }
+
+/* Settings-style sections: ruled, not boxed */
+.section { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: 1.5rem 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.section h2 { font-size: 1.15rem; }
+.section__intro { display: grid; gap: 0.3rem; align-content: start; color: var(--muted); font-size: 0.94rem; }
+.section__intro h2 { color: var(--text); }
+.section__body { display: grid; gap: 1.1rem; max-width: 34rem; }
+@media (max-width: 52rem) { .section { grid-template-columns: 1fr; } }
+
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem 2rem; margin: 0; }
+.facts dt { font-size: 0.85rem; color: var(--muted); }
+.facts dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+
+.entry { display: grid; gap: 0.35rem; padding: 1rem 0; border-top: 1px solid var(--line); }
+.entry:first-child { border-top: 0; }
+.entry header { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; color: var(--muted); font-size: 0.88rem; }
+.entry header strong { color: var(--text); }
+.entry p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem; }

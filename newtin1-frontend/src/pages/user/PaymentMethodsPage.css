@@ -1,0 +1,20 @@
+.pm-grid { display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fill, minmax(16.5rem, 1fr)); }
+.pm-card {
+  position: relative; overflow: hidden; display: grid; gap: 1.1rem; padding: 1.15rem 1.25rem;
+  border-radius: var(--radius-lg, 18px); border: 1.5px solid var(--line-strong); background: var(--surface);
+}
+.pm-card::before {
+  content: ''; position: absolute; inset: 0 0 auto 0; height: 5px;
+  background: linear-gradient(90deg, var(--leaf, #9be3b8), var(--sky, #9cd3f5));
+}
+.pm-card--default { border-color: var(--ink); }
+.pm-card__top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding-top: 0.2rem; }
+.pm-card__brand { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; letter-spacing: 0.02em; }
+.pm-card__num { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1.15rem; letter-spacing: 0.12em; }
+.pm-card__meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.88rem; }
+.pm-card__badges { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.pm-card__actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.pm-form { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pm-form .full { grid-column: 1 / -1; }
+.pm-check { display: flex; gap: 0.6rem; align-items: center; font-weight: 500; }
+@media (max-width: 560px) { .pm-form { grid-template-columns: 1fr; } }

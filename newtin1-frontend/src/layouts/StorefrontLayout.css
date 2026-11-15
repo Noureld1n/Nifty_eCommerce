@@ -1,0 +1,13 @@
+.store { min-height: 100dvh; }
+.store__main { width: min(100% - 2rem, 72rem); min-height: calc(100dvh - 10rem); margin-inline: auto; padding-block: 2rem 4rem; }
+.store__page { display: grid; gap: 2rem; align-content: start; animation: page-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.store__footer { border-top: 1px solid var(--line); background: var(--surface); }
+.store__footer-wrap {
+  width: min(100% - 2rem, 72rem); min-height: 5rem; margin-inline: auto;
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  color: var(--muted); font-size: 0.9rem;
+}
+@media (max-width: 38rem) {
+  .store__main { padding-top: 1.25rem; }
+  .store__footer-wrap { min-height: 4.5rem; align-items: flex-start; flex-direction: column; justify-content: center; gap: 0.25rem; }
+}

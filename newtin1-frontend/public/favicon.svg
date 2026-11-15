@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <clipPath id="c"><path d="M60 30 C52 22 36 22 25 32 C12 44 12 68 24 86 C33 99 44 108 53 106 C57 105 63 105 67 106 C76 108 87 99 96 86 C108 68 108 44 95 32 C84 22 68 22 60 30 Z"/></clipPath>
+    <radialGradient id="s" cx=".33" cy=".27" r=".95"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#0b1a24" stop-opacity=".25"/></radialGradient>
+  </defs>
+  <g clip-path="url(#c)">
+    <circle cx="60" cy="65" r="54" fill="#8fcff6"/>
+    <path d="M60 11 A27 27 0 0 1 60 65 A27 27 0 0 0 60 119 A54 54 0 0 1 60 11 Z" fill="#8ee3b4"/>
+    <circle cx="60" cy="38" r="8" fill="#8fcff6"/><circle cx="60" cy="92" r="8" fill="#8ee3b4"/>
+    <rect x="8" y="16" width="104" height="100" fill="url(#s)"/>
+  </g>
+  <path d="M60 30 C52 22 36 22 25 32 C12 44 12 68 24 86 C33 99 44 108 53 106 C57 105 63 105 67 106 C76 108 87 99 96 86 C108 68 108 44 95 32 C84 22 68 22 60 30 Z" fill="none" stroke="#12161c" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M60 30 C60 22 62 15 69 10" fill="none" stroke="#12161c" stroke-width="4" stroke-linecap="round"/>
+  <path d="M67 15 C71 5 85 5 92 10 C88 19 76 21 67 15 Z" fill="#8ee3b4" stroke="#12161c" stroke-width="2.4" stroke-linejoin="round"/>
+  <g stroke="#12161c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M62 53 L58 75 M58 75 L71 84 L67 98 M58 75 L47 88 L50 99 M62 56 L74 63 L81 56 M62 56 L50 62 L47 73"/>
+  </g>
+  <circle cx="67" cy="40" r="8.2" fill="#12161c"/>
+  <path d="M59 38 Q66 33 74 38" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

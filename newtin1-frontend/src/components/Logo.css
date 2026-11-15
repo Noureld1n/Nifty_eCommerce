@@ -1,0 +1,87 @@
+.logo {
+  --run-duration: 0.72s;
+  --spin-duration: 12s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--ink, #12161c);
+}
+.logo[data-speed='fast'] { --run-duration: 0.4s; --spin-duration: 2.6s; }
+
+.logo__svg { display: block; overflow: visible; }
+.logo__shadow { fill: rgba(18, 22, 28, 0.16); transform-origin: 60px 116px; animation: shadow var(--run-duration) ease-in-out infinite; }
+
+/* ---------- the apple ---------- */
+.logo__apple { transform-origin: 60px 108px; animation: apple-bob var(--run-duration) ease-in-out infinite; }
+.logo__yin { transform-origin: 60px 65px; animation: yin var(--spin-duration) linear infinite; }
+.logo__outline { fill: none; stroke: var(--ink, #12161c); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.logo__stem { stroke-width: 3.6; }
+.logo__leaf { stroke: var(--ink, #12161c); stroke-width: 2; stroke-linejoin: round; }
+.logo__vein { fill: none; stroke: var(--ink, #12161c); stroke-width: 1.2; stroke-linecap: round; opacity: 0.55; }
+.logo__gloss { fill: none; stroke: #fff; stroke-width: 3.2; stroke-linecap: round; opacity: 0.8; }
+.logo__spark { fill: #fff; transform-box: fill-box; transform-origin: center; animation: twinkle 3.6s ease-in-out infinite; }
+.logo__sheen { animation: sheen 3.8s ease-in-out infinite; }
+
+/* ---------- the runner ---------- */
+.ink-line { fill: none; stroke: #12161c; stroke-width: 4.8; stroke-linecap: round; stroke-linejoin: round; }
+.limb--back .ink-line, .limb--back .ink-fill, .limb--back .shoe { stroke: #3a444f; fill: #3a444f; }
+.limb--back .ink-line { fill: none; }
+.ink-fill { fill: #12161c; }
+.ink-join { stroke: #12161c; stroke-width: 3; stroke-linejoin: round; }
+.shoe { fill: #12161c; }
+.sole { fill: none; stroke: #fff; stroke-width: 1.1; stroke-linecap: round; opacity: 0.9; }
+.waist { fill: none; stroke: #fff; stroke-width: 1.2; stroke-linecap: round; opacity: 0.9; }
+.eye { fill: #fff; }
+.band { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; }
+.tail { fill: none; stroke: #12161c; stroke-width: 2.4; stroke-linecap: round; }
+.logo__speed line { stroke: #12161c; stroke-width: 2.2; stroke-linecap: round; opacity: 0; animation: streak var(--run-duration) linear infinite; }
+.logo__speed line:nth-child(2) { animation-delay: calc(var(--run-duration) / -3); }
+.logo__speed line:nth-child(3) { animation-delay: calc(var(--run-duration) / -1.5); }
+
+.logo__body { animation: body-bob calc(var(--run-duration) / 2) ease-in-out infinite; transform-origin: 58px 74px; }
+.torso { transform: rotate(6deg); transform-origin: 58px 74px; } /* lean into the run */
+.tails { animation: flutter calc(var(--run-duration) / 2) ease-in-out infinite alternate; }
+
+/* legs: the thigh swings, the shin folds up behind it */
+.limb--leg.limb--front { animation: thigh var(--run-duration) ease-in-out infinite; }
+.limb--leg.limb--back  { animation: thigh var(--run-duration) ease-in-out infinite; animation-delay: calc(var(--run-duration) / -2); }
+.limb--leg.limb--front > .limb__lower { animation: shin var(--run-duration) ease-in-out infinite; }
+.limb--leg.limb--back  > .limb__lower { animation: shin var(--run-duration) ease-in-out infinite; animation-delay: calc(var(--run-duration) / -2); }
+
+/* arms swing opposite to the legs, forearms stay bent */
+.limb--arm.limb--front { animation: arm var(--run-duration) ease-in-out infinite; animation-delay: calc(var(--run-duration) / -2); }
+.limb--arm.limb--back  { animation: arm var(--run-duration) ease-in-out infinite; }
+.limb--arm > .limb__lower { transform: rotate(-72deg); }
+
+@keyframes thigh { 0%, 100% { transform: rotate(-38deg); } 50% { transform: rotate(38deg); } }
+@keyframes shin {
+  0%   { transform: rotate(10deg); }
+  25%  { transform: rotate(8deg); }
+  50%  { transform: rotate(72deg); }
+  75%  { transform: rotate(82deg); }
+  100% { transform: rotate(10deg); }
+}
+@keyframes arm { 0%, 100% { transform: rotate(-45deg); } 50% { transform: rotate(45deg); } }
+@keyframes body-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@keyframes apple-bob { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-1.5px) rotate(-1deg); } }
+@keyframes shadow { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(0.86); opacity: 0.7; } }
+@keyframes flutter { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+@keyframes streak { 0% { transform: translateX(8px); opacity: 0; } 35% { opacity: 0.5; } 100% { transform: translateX(-12px); opacity: 0; } }
+@keyframes yin { to { transform: rotate(360deg); } }
+@keyframes twinkle { 0%, 55%, 100% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 85% { transform: scale(0.6); opacity: 0.8; } }
+@keyframes sheen { 0%, 30%, 100% { transform: translateX(0); } 22% { transform: translateX(210px); } }
+
+.logo[data-speed='paused'] *,
+.logo[data-speed='paused'] { animation-play-state: paused !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .logo *, .logo { animation: none !important; }
+  .logo__speed, .logo__sheen { display: none; }
+}
+
+.logo__word {
+  font-family: var(--font-display, system-ui);
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}

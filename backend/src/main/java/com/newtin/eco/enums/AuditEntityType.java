@@ -1,0 +1,5 @@
+package com.newtin.eco.enums;
+
+public enum AuditEntityType {
+    USER, CATEGORY, PRODUCT, VARIANT_ITEM, PRODUCT_IMAGE, PROCUREMENT_PACKAGE, PROVIDER, ACCOUNTABLE, PROMOTION
+}

@@ -1,0 +1,14 @@
+.address-list { display: grid; }
+.address-card {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+  gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--line);
+}
+.address-card__heading { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-bottom: 0.3rem; text-transform: capitalize; }
+.address-card p { color: var(--muted); overflow-wrap: anywhere; }
+.address-card__actions, .address-form__actions { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+.address-form select { width: 100%; min-height: 2.9rem; padding: 0.5rem 0.9rem; background: var(--surface); border: 1.5px solid var(--line-strong); border-radius: 12px; }
+.address-form .field > span { font-size: 0.92rem; font-weight: 600; }
+@media (max-width: 46rem) {
+  .address-card { grid-template-columns: 1fr; }
+  .address-card__actions { justify-content: flex-start; }
+}
