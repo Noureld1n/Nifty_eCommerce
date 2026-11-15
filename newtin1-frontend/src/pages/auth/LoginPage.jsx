@@ -77,7 +77,7 @@ export default function LoginPage() {
     <AuthCard
       title="Welcome back"
       subtitle="Log in to keep your account and orders in one place."
-      footer={<>New to Newtin? <Link to="/register">Create an account</Link></>}
+      footer={<>New to Nifty? <Link to="/register">Create an account</Link></>}
     >
       {flash && <Alert tone="success">{flash}</Alert>}
       {notice && <Alert tone="info">{notice}</Alert>}

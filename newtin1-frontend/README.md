@@ -1,6 +1,6 @@
-# Newtin web
+# Nifty web
 
-React + Vite front end for the Newtin Spring Boot API.
+React + Vite front end for the Nifty Spring Boot API.
 
 ## Run
 

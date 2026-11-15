@@ -46,12 +46,27 @@
 .shop-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 .shop-card { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); transition: transform 0.18s, box-shadow 0.18s; }
 .shop-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.shop-card__visual { position: relative; }
 .shop-card__image { position: relative; display: grid; place-items: center; aspect-ratio: 1 / 1.05; overflow: hidden; background: var(--surface-2); color: var(--muted); text-decoration: none; }
 .shop-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
 .shop-card:hover .shop-card__image img { transform: scale(1.035); }
 .shop-card__placeholder { display: grid; place-items: center; width: 70%; aspect-ratio: 1; border-radius: 50%; background: linear-gradient(135deg, var(--split-l), var(--split-r)); }
 .shop-card__placeholder span { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--ink); }
 .shop-card__sale { position: absolute; top: 0.7rem; left: 0.7rem; padding: 0.25rem 0.65rem; border-radius: 999px; background: var(--ok-bg); color: var(--ok); font-size: 0.76rem; font-weight: 700; }
+.shop-card__wishlist, .shop-wishlist-button {
+  display: grid; place-items: center; width: 2.7rem; height: 2.7rem; flex: none;
+  border: 1px solid var(--line); border-radius: 50%; background: var(--surface);
+  color: var(--muted); box-shadow: 0 3px 12px rgb(0 0 0 / 12%); cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+.shop-card__wishlist { position: absolute; top: 0.7rem; right: 0.7rem; z-index: 1; }
+.shop-card__wishlist svg, .shop-wishlist-button svg { width: 1.3rem; height: 1.3rem; }
+.shop-card__wishlist:hover, .shop-wishlist-button:hover { color: #b42345; border-color: #e6a3b2; transform: scale(1.05); }
+.shop-card__wishlist.is-active, .shop-wishlist-button.is-active { color: #c02f50; }
+.shop-card__wishlist:disabled, .shop-wishlist-button:disabled { opacity: 0.55; cursor: wait; transform: none; }
+.shop-card__wishlist:focus-visible, .shop-wishlist-button:focus-visible, .shop-review-rating__star:has(input:focus-visible) {
+  outline: 2px solid var(--sky-deep); outline-offset: 3px;
+}
 .shop-card__body { display: grid; gap: 0.55rem; padding: 0.9rem; }
 .shop-card__meta { display: flex; justify-content: space-between; gap: 0.35rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.7rem; }
 .shop-card__limited { color: var(--danger); text-align: right; }
@@ -105,22 +120,37 @@
 .shop-rating strong { color: var(--text); }
 .shop-rating-link { width: max-content; text-decoration: none; }
 .shop-detail__customer-actions { display: grid; justify-items: start; gap: 0.6rem; padding-top: 0.4rem; }
-.shop-detail__text-link, .shop-reviews__signin a { color: var(--link); font-size: 0.9rem; }
+.shop-detail__primary-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; }
+.shop-wishlist-button { width: 2.9rem; height: 2.9rem; box-shadow: none; }
+.shop-reviews__signin a { color: var(--link); font-size: 0.9rem; }
 .shop-reviews { display: grid; gap: 1.1rem; padding-top: 1.5rem; border-top: 1px solid var(--line); scroll-margin-top: 7rem; }
 .shop-reviews__heading { display: flex; justify-content: space-between; align-items: end; gap: 1rem; }
 .shop-reviews__heading > div { display: grid; gap: 0.35rem; }
 .shop-reviews__heading h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); }
-.shop-review-form { display: grid; gap: 1rem; max-width: 42rem; padding: 1.2rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.shop-review-form { display: grid; gap: 1rem; width: 100%; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); box-shadow: 0 10px 30px -26px var(--ink); }
 .shop-review-form__heading { display: flex; align-items: center; gap: 0.7rem; }
 .shop-review-form__heading h3 { font-size: 1.05rem; }
 .shop-review-form .shop-select { max-width: 24rem; }
+.shop-review-rating { display: grid; gap: 0.45rem; margin: 0; padding: 0; border: 0; }
+.shop-review-rating legend { margin-bottom: 0.1rem; font-size: 0.92rem; font-weight: 650; }
+.shop-review-rating__stars { display: flex; align-items: center; gap: 0.15rem; }
+.shop-review-rating__star { position: relative; display: grid; place-items: center; min-width: 2.25rem; min-height: 2.5rem; border-radius: 8px; color: var(--line-strong); cursor: pointer; transition: color 140ms ease, transform 140ms ease; }
+.shop-review-rating__star span[aria-hidden='true'] { font-size: 1.8rem; line-height: 1; }
+.shop-review-rating__star.is-filled { color: #b57a18; }
+.shop-review-rating__star:hover { color: #d39a2e; transform: translateY(-2px); }
+.shop-review-rating__star input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+.shop-review-rating__sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+.shop-review-rating__stars > strong { margin-left: 0.55rem; color: var(--text); font-size: 0.88rem; }
 .shop-review-form__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
-.shop-review-list { display: grid; }
-.shop-review { display: grid; gap: 0.5rem; padding: 1rem 0; border-top: 1px solid var(--line); }
+.shop-review-list { display: grid; gap: 0.75rem; }
+.shop-review { display: grid; gap: 0.65rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .shop-review header { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.8rem; color: var(--muted); font-size: 0.88rem; }
 .shop-review header strong { color: var(--text); }
 .shop-review h3 { font-size: 1.05rem; }
 .shop-review p { color: var(--muted); white-space: pre-wrap; }
+@media (prefers-reduced-motion: reduce) {
+  .shop-card__wishlist, .shop-wishlist-button, .shop-review-rating__star { transition: none; }
+}
 
 @media (max-width: 60rem) {
   .shop-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }

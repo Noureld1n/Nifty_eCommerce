@@ -7,6 +7,7 @@ export const CUSTOMER_LINKS = {
   menus: [
     {
       label: 'Account',
+      icon: 'account',
       items: [
         { to: '/account/profile', label: 'Profile' },
         { to: '/account/addresses', label: 'Addresses' },
@@ -21,13 +22,14 @@ export const CUSTOMER_LINKS = {
 export const ADMIN_LINKS = {
   primary: [
     { to: '/shop', label: 'Shop', end: true, icon: 'shop' },
-    { to: '/admin/analytics', label: 'Overview' },
-    { to: '/admin/catalog', label: 'Catalog' },
-    { to: '/admin/orders', label: 'Orders' },
+    { to: '/admin/analytics', label: 'Overview', icon: 'overview' },
+    { to: '/admin/catalog', label: 'Catalog', icon: 'catalog' },
+    { to: '/admin/orders', label: 'Orders', icon: 'orders' },
   ],
   menus: [
     {
       label: 'Commerce',
+      icon: 'commerce',
       items: [
         { to: '/admin/promotions', label: 'Promotions' },
         { to: '/admin/procurement', label: 'Procurement & stock' },
@@ -35,6 +37,7 @@ export const ADMIN_LINKS = {
     },
     {
       label: 'Administration',
+      icon: 'administration',
       items: [
         { to: '/admin/users', label: 'Users' },
         { to: '/admin/feedback', label: 'Customer feedback' },

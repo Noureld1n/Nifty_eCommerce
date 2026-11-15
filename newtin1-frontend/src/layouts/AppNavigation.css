@@ -21,7 +21,7 @@
   color: var(--muted); font-size: 0.94rem; font-weight: 600;
   text-decoration: none; white-space: nowrap; cursor: pointer; list-style: none;
 }
-.app-nav__primary > a svg { width: 1.1rem; height: 1.1rem; flex: none; }
+.app-nav__link-icon { width: 1.1rem; height: 1.1rem; flex: none; }
 .app-nav-menu > summary::-webkit-details-marker { display: none; }
 .app-nav__chevron { width: 1rem; height: 1rem; color: currentColor; transition: transform 160ms ease; }
 .app-nav-menu[open] .app-nav__chevron { transform: rotate(180deg); }

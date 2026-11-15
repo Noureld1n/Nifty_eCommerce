@@ -223,7 +223,7 @@ export default function AdminAnalyticsPage() {
     <div className="analytics-page">
       <header className="analytics-hero">
         <div>
-          <span className="analytics-kicker">Newtin · Admin intelligence</span>
+          <span className="analytics-kicker">Nifty · Admin intelligence</span>
           <h1>Business overview</h1>
           <p>Sales, purchasing, inventory, and supplier performance in one place.</p>
         </div>

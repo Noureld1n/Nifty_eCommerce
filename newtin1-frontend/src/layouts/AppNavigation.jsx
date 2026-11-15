@@ -30,9 +30,48 @@ function CartIcon() {
 }
 
 function PrimaryLinkIcon({ name }) {
+  if (name === 'account') {
+    return (
+      <svg className="app-nav__link-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M5 20a7 7 0 0 1 14 0" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+    )
+  }
+  if (name === 'overview') {
+    return (
+      <svg className="app-nav__link-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 19V5M4 19h17M8 15l4-4 3 2 5-6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    )
+  }
+  if (name === 'catalog') {
+    return (
+      <svg className="app-nav__link-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13Z" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+    )
+  }
+  if (name === 'commerce') {
+    return (
+      <svg className="app-nav__link-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+        <path d="m4.5 7.8 7.5 4.4 7.5-4.4M12 12.2V21" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+      </svg>
+    )
+  }
+  if (name === 'administration') {
+    return (
+      <svg className="app-nav__link-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M3.5 19v-1a5.5 5.5 0 0 1 11 0v1h-11ZM17 8h4M19 6v4M17 15a4 4 0 0 1 3.5 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    )
+  }
   if (name === 'shop') {
     return (
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <svg className="app-nav__link-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M4 9h16l-1.3 11H5.3L4 9Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
         <path d="M8 9a4 4 0 0 1 8 0" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
       </svg>
@@ -40,14 +79,14 @@ function PrimaryLinkIcon({ name }) {
   }
   if (name === 'wishlist') {
     return (
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <svg className="app-nav__link-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M20.8 8.8c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10A4.6 4.6 0 0 1 12 6.4a4.6 4.6 0 0 1 8.8 2.4Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     )
   }
   if (name === 'orders') {
     return (
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <svg className="app-nav__link-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     )
@@ -174,7 +213,7 @@ export default function AppNavigation({ links }) {
     <>
       <header className="app-nav">
         <div className="app-nav__wrap">
-          <Link to="/shop" className="app-nav__brand" aria-label="Newtin shop">
+          <Link to="/shop" className="app-nav__brand" aria-label="Nifty shop">
             <Logo size={36} wordmark speed="paused" />
           </Link>
           <nav className="app-nav__sections" aria-label="Main navigation">
@@ -209,7 +248,13 @@ export default function AppNavigation({ links }) {
                       key={menu.label}
                       ref={(element) => { menuRefs.current[index] = element }}
                     >
-                      <summary className={active ? 'active' : ''}>
+                      <summary
+                        className={active ? 'active' : ''}
+                        onClick={() => menuRefs.current.forEach((element, otherIndex) => {
+                          if (otherIndex !== index && element) element.open = false
+                        })}
+                      >
+                        {menu.icon && <PrimaryLinkIcon name={menu.icon} />}
                         {menu.label}
                         <ChevronIcon />
                       </summary>

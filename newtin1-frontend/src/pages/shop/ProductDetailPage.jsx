@@ -4,6 +4,7 @@ import { catalogApi } from '../../api/catalogApi'
 import { cartApi, reviewApi, wishlistApi } from '../../api/customerCommerceApi'
 import { useAuth } from '../../auth/useAuth'
 import { Alert, Button, Field, Pager } from '../../components/ui'
+import HeartIcon from '../../components/HeartIcon'
 import { useFetch } from '../../hooks/useFetch'
 import { useTitle } from '../../hooks/useTitle'
 import { normalizePage } from '../../lib/format'
@@ -19,6 +20,34 @@ function Rating({ value, count }) {
       <strong>{score.toFixed(1)}</strong>
       {count != null && <span>({count})</span>}
     </span>
+  )
+}
+
+function ReviewRatingInput({ value, onChange }) {
+  return (
+    <fieldset className="shop-review-rating">
+      <legend>Your rating</legend>
+      <div className="shop-review-rating__stars">
+        {[1, 2, 3, 4, 5].map((rating) => (
+          <label
+            className={`shop-review-rating__star ${Number(value) >= rating ? 'is-filled' : ''}`}
+            key={rating}
+            title={`${rating} ${rating === 1 ? 'star' : 'stars'}`}
+          >
+            <input
+              type="radio"
+              name="review-rating"
+              value={rating}
+              checked={Number(value) === rating}
+              onChange={() => onChange(String(rating))}
+            />
+            <span aria-hidden="true">★</span>
+            <span className="shop-review-rating__sr-only">{rating} {rating === 1 ? 'star' : 'stars'}</span>
+          </label>
+        ))}
+        <strong>{value} / 5</strong>
+      </div>
+    </fieldset>
   )
 }
 
@@ -222,7 +251,7 @@ export default function ProductDetailPage() {
           <div className="shop-detail__main-image" key={selected?.variantItemId}>
             {image
               ? <img src={image.imageUrl} alt={image.altText || currentProduct.name} />
-              : <span className="shop-detail__placeholder" aria-hidden="true">Newtin</span>}
+              : <span className="shop-detail__placeholder" aria-hidden="true">Nifty</span>}
           </div>
           {images.length > 1 && (
             <div className="shop-detail__thumbs" aria-label="Product images">
@@ -307,13 +336,22 @@ export default function ProductDetailPage() {
           <div className="shop-detail__customer-actions">
             {isCustomer
               ? <>
-                  <Button disabled={!selected || selected.stockQuantity < 1} loading={cartBusy} onClick={addSelectedToCart}>
-                    {selected?.stockQuantity ? 'Add to cart' : 'Out of stock'}
-                  </Button>
+                  <div className="shop-detail__primary-actions">
+                    <Button disabled={!selected || selected.stockQuantity < 1} loading={cartBusy} onClick={addSelectedToCart}>
+                      {selected?.stockQuantity ? 'Add to cart' : 'Out of stock'}
+                    </Button>
+                    <button
+                      className={`shop-wishlist-button ${isWishlisted ? 'is-active' : ''}`}
+                      type="button"
+                      aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+                      aria-pressed={isWishlisted}
+                      disabled={wishlistBusy || wishlistState.loading || Boolean(wishlistState.error)}
+                      onClick={toggleWishlist}
+                    >
+                      <HeartIcon filled={isWishlisted} />
+                    </button>
+                  </div>
                   {cartError && <Alert tone="error">{cartError}</Alert>}
-                  <Button variant={isWishlisted ? 'ghost' : 'primary'} loading={wishlistBusy || wishlistState.loading} onClick={toggleWishlist}>
-                    {isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
-                  </Button>
                 </>
               : !user && <>
                   <Link className="btn btn--primary" to="/login" state={{ from: '/account/cart' }}>
@@ -325,7 +363,6 @@ export default function ProductDetailPage() {
                 </>}
             {wishlistError && <Alert tone="error">{wishlistError}</Alert>}
             {isCustomer && wishlistState.error && <Alert tone="error">{wishlistState.error}</Alert>}
-            {isCustomer && <Link className="shop-detail__text-link" to="/account/wishlist">View your wishlist</Link>}
           </div>
         </div>
       </div>
@@ -357,14 +394,10 @@ export default function ProductDetailPage() {
             {reviewError && <Alert tone="error">{reviewError}</Alert>}
             {reviewMessage && <Alert tone="success">{reviewMessage}</Alert>}
             {mineState.error && <Alert tone="error">{mineState.error}</Alert>}
-            <label className="shop-select">
-              <span>Your rating</span>
-              <select value={reviewForm.rating} onChange={(event) => setReviewForm((form) => ({ ...form, rating: event.target.value }))}>
-                {[5, 4, 3, 2, 1].map((rating) => (
-                  <option key={rating} value={rating}>{rating} {rating === 1 ? 'star' : 'stars'}</option>
-                ))}
-              </select>
-            </label>
+            <ReviewRatingInput
+              value={reviewForm.rating}
+              onChange={(rating) => setReviewForm((form) => ({ ...form, rating }))}
+            />
             <Field label="Title" optional maxLength={200} value={reviewForm.title}
               onChange={(event) => setReviewForm((form) => ({ ...form, title: event.target.value }))} />
             <Field label="Your review" optional as="textarea" maxLength={10000} value={reviewForm.text}

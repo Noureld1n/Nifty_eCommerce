@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
 
 export function useTitle(title) {
-  useEffect(() => { document.title = title ? `${title} · Newtin` : 'Newtin' }, [title])
+  useEffect(() => { document.title = title ? `${title} · Nifty` : 'Nifty' }, [title])
 }

@@ -39,7 +39,6 @@ public class AuthService {
     private final UserTokenService userTokenService;
     private final ApplicationEventPublisher events;
     private final TransactionTemplate tx;
-    private final MailService mailService;
 
     // not final on purpose: Lombok leaves them out of the constructor and Spring injects them
     @Value("${app.security.max-failed-logins:5}") private int maxFailedLogins;

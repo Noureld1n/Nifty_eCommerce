@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { catalogApi } from '../../api/catalogApi'
+import { wishlistApi } from '../../api/customerCommerceApi'
+import { useAuth } from '../../auth/useAuth'
 import { Alert, Button, Field, Pager } from '../../components/ui'
+import HeartIcon from '../../components/HeartIcon'
 import { useFetch } from '../../hooks/useFetch'
 import { useTitle } from '../../hooks/useTitle'
 import { normalizePage } from '../../lib/format'
@@ -89,18 +92,32 @@ function OfferCards({ promotions, error, loading }) {
   )
 }
 
-function ProductCard({ product }) {
+function ProductCard({ product, isCustomer, isWishlisted, wishlistBusy, onToggleWishlist }) {
   const image = productImage(product)
   const variant = priceFor(product)
   const onSale = variant && Number(variant.currentPrice) < Number(variant.regularPrice)
   return (
     <article className="shop-card">
-      <Link to={`/shop/products/${product.id}`} className="shop-card__image" aria-label={`View ${product.name}`}>
-        {image
-          ? <img src={image.imageUrl} alt={image.altText || product.name} loading="lazy" />
-          : <span className="shop-card__placeholder" aria-hidden="true"><span>Newtin</span></span>}
-        {onSale && <span className="shop-card__sale">Offer</span>}
-      </Link>
+      <div className="shop-card__visual">
+        <Link to={`/shop/products/${product.id}`} className="shop-card__image" aria-label={`View ${product.name}`}>
+          {image
+            ? <img src={image.imageUrl} alt={image.altText || product.name} loading="lazy" />
+            : <span className="shop-card__placeholder" aria-hidden="true"><span>Nifty</span></span>}
+          {onSale && <span className="shop-card__sale">Offer</span>}
+        </Link>
+        {isCustomer && (
+          <button
+            className={`shop-card__wishlist ${isWishlisted ? 'is-active' : ''}`}
+            type="button"
+            aria-label={isWishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+            aria-pressed={isWishlisted}
+            disabled={wishlistBusy}
+            onClick={() => onToggleWishlist(product)}
+          >
+            <HeartIcon filled={isWishlisted} />
+          </button>
+        )}
+      </div>
       <div className="shop-card__body">
         <div className="shop-card__meta">
           <span>{product.categoryName || product.type?.toLowerCase()}</span>
@@ -125,6 +142,8 @@ function ProductCard({ product }) {
 
 export default function ShopPage() {
   useTitle('Shop')
+  const { user } = useAuth()
+  const isCustomer = user?.role === 'ROLE_CUSTOMER'
   const [searchParams, setSearchParams] = useSearchParams()
   const [categoryId, setCategoryId] = useState(() => searchParams.get('categoryId') ?? '')
   const [type, setType] = useState('')
@@ -136,15 +155,27 @@ export default function ShopPage() {
   )
   const categoriesFetcher = useCallback(() => catalogApi.categories(), [])
   const promotionsFetcher = useCallback(() => catalogApi.promotions(), [])
+  const wishlistFetcher = useCallback(() => isCustomer ? wishlistApi.list() : Promise.resolve([]), [isCustomer])
   const productsState = useFetch(productsFetcher)
   const categoriesState = useFetch(categoriesFetcher)
   const promotionsState = useFetch(promotionsFetcher)
+  const wishlistState = useFetch(wishlistFetcher)
+  const [wishlistBusyId, setWishlistBusyId] = useState(null)
+  const [wishlistError, setWishlistError] = useState('')
+  const [wishlistOverrides, setWishlistOverrides] = useState({})
   const products = normalizePage(productsState.data)
   const categories = useMemo(
     () => Array.isArray(categoriesState.data) ? categoriesState.data : [],
     [categoriesState.data],
   )
   const promotions = normalizePage(promotionsState.data).items
+  const wishlistedProductIds = useMemo(
+    () => new Set((Array.isArray(wishlistState.data) ? wishlistState.data : []).map((item) => String(item.productId))),
+    [wishlistState.data],
+  )
+  useEffect(() => {
+    setWishlistOverrides({})
+  }, [wishlistState.data])
   const orderedCategories = useMemo(() => categoryOptions(categories), [categories])
   const visibleProducts = useMemo(() => {
     const query = search.trim().toLowerCase()
@@ -175,11 +206,27 @@ export default function ShopPage() {
     setPage(0)
   }
 
+  async function toggleWishlist(product) {
+    const productId = String(product.id)
+    const isWishlisted = wishlistOverrides[productId] ?? wishlistedProductIds.has(productId)
+    setWishlistBusyId(productId)
+    setWishlistError('')
+    try {
+      if (isWishlisted) await wishlistApi.remove(product.id)
+      else await wishlistApi.add(product.id)
+      setWishlistOverrides((overrides) => ({ ...overrides, [productId]: !isWishlisted }))
+    } catch (requestError) {
+      setWishlistError(requestError.message)
+    } finally {
+      setWishlistBusyId(null)
+    }
+  }
+
   return (
     <>
       <section className="shop-hero">
         <div className="shop-hero__copy">
-          <span className="shop-kicker">Welcome to Newtin</span>
+          <span className="shop-kicker">Welcome to Nifty</span>
           <h1>Find your new<br /><em>everyday favorite.</em></h1>
           <p>Thoughtful pieces for your wardrobe, your routine, and everything in between.</p>
           <a className="btn btn--primary" href="#collection">Explore the collection</a>
@@ -232,8 +279,23 @@ export default function ShopPage() {
             {productsState.error}
           </Alert>
         )}
+        {isCustomer && wishlistState.error && (
+          <Alert tone="error" action={<Button variant="ghost" small onClick={wishlistState.reload}>Try again</Button>}>
+            Wishlist status could not be loaded: {wishlistState.error}
+          </Alert>
+        )}
+        {wishlistError && <Alert tone="error">{wishlistError}</Alert>}
         <div className="shop-grid" aria-busy={productsState.loading}>
-          {visibleProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+          {visibleProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              isCustomer={isCustomer}
+              isWishlisted={wishlistOverrides[String(product.id)] ?? wishlistedProductIds.has(String(product.id))}
+              wishlistBusy={wishlistBusyId === String(product.id) || (wishlistState.loading && !wishlistState.data) || Boolean(wishlistState.error)}
+              onToggleWishlist={toggleWishlist}
+            />
+          ))}
         </div>
         {!productsState.loading && !productsState.error && visibleProducts.length === 0 && (
           <div className="empty">

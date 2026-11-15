@@ -67,7 +67,7 @@ export default function AuthLayout() {
       </div>
 
       <header className="auth__top">
-        <Link to="/" className="auth__brand" aria-label="Newtin home">
+        <Link to="/" className="auth__brand" aria-label="Nifty home">
           <Logo size={46} wordmark />
         </Link>
       </header>

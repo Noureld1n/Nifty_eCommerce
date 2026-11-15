@@ -9,7 +9,7 @@ const APPLE =
 const GREEN_HALF = 'M60 11 A27 27 0 0 1 60 65 A27 27 0 0 0 60 119 A54 54 0 0 1 60 11 Z'
 
 /**
- * Newtin mark: a black runner inside a round apple whose green and blue halves
+ * Nifty mark: a black runner inside a round apple whose green and blue halves
  * spin like a yin-yang.
  *
  * speed: 'normal' | 'fast' | 'paused'
@@ -22,7 +22,7 @@ export default function Logo({ size = 96, speed = 'normal', wordmark = false, cl
 
   return (
     <span className={`logo ${wordmark ? 'logo--wordmark' : ''} ${className}`} data-speed={speed}>
-      <svg className="logo__svg" width={size} height={size} viewBox="0 0 120 120" role="img" aria-label="Newtin">
+      <svg className="logo__svg" width={size} height={size} viewBox="0 0 120 120" role="img" aria-label="Nifty">
         <defs>
           <clipPath id={id('clip')}><path d={APPLE} /></clipPath>
           <linearGradient id={id('green')} gradientUnits="userSpaceOnUse" x1="6" y1="11" x2="114" y2="119">
@@ -138,7 +138,7 @@ export default function Logo({ size = 96, speed = 'normal', wordmark = false, cl
           </g>
         </g>
       </svg>
-      {wordmark && <span className="logo__word">Newtin</span>}
+      {wordmark && <span className="logo__word">Nifty</span>}
     </span>
   )
 }
