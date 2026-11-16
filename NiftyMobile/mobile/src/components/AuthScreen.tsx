@@ -1,6 +1,6 @@
 import { useMemo, type PropsWithChildren } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useAppTheme } from '../ThemeProvider';
 import { BrandLogo } from './BrandLogo';
@@ -12,9 +12,22 @@ export function AuthScreen({
   children,
 }: PropsWithChildren<{ title: string; subtitle: string }>) {
   const styles = useStyles();
+  // The insets come from the provider that is already measured, so they are
+  // right on the very first frame. (SafeAreaView measures after it appears,
+  // which makes the top padding jump every time an auth screen opens.)
+  const insets = useSafeAreaInsets();
   return (
     // The themed background stays put; only the content inside it animates.
-    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+    <View
+      style={[
+        styles.safeArea,
+        {
+          paddingTop: insets.top,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        },
+      ]}
+    >
       <ScreenTransition>
         <ScrollView
           contentContainerStyle={styles.content}
@@ -34,7 +47,7 @@ export function AuthScreen({
           {children}
         </ScrollView>
       </ScreenTransition>
-    </SafeAreaView>
+    </View>
   );
 }
 

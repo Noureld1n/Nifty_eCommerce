@@ -7,7 +7,6 @@ import { StatusBar } from 'expo-status-bar';
 import { SessionProvider } from '../auth/SessionProvider';
 import { PageWheelTransitionProvider } from '../PageWheelTransition';
 import { ThemeProvider, useAppTheme } from '../ThemeProvider';
-import { AppShell } from '../components/AppShell'; // Adjust path if AppShell is inside a components folder (e.g. '../components/AppShell')
 
 export default function RootLayout() {
   return (
@@ -39,12 +38,13 @@ function ThemedNavigation() {
     document.body.style.backgroundColor = background;
   }, [background]);
 
+  // The app shell (header, bottom navigation, page wheel) is NOT here any
+  // more. It lives in the (app) group layout, so login and the other auth
+  // screens render on their own, without it.
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
       <StatusBar style={theme.scheme === 'dark' ? 'light' : 'dark'} />
-      <AppShell>
-        <Slot />
-      </AppShell>
+      <Slot />
     </View>
   );
 }

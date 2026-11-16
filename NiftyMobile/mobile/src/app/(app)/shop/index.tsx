@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useSession } from '../../auth/useSession';
-import type { Category, Product, Promotion, WishlistItem } from '../../api/commerceTypes';
-import { catalogApi } from '../../api/catalogApi';
-import { wishlistApi } from '../../api/customerCommerceApi';
-import { useScreenTitle } from '../../components/AppShell';
-import { Pagination } from '../../components/Pagination';
-import { ProductCard } from '../../components/ProductCard';
-import { SelectField } from '../../components/SelectField';
+import { useSession } from '../../../auth/useSession';
+import type { Category, Product, Promotion, WishlistItem } from '../../../api/commerceTypes';
+import { catalogApi } from '../../../api/catalogApi';
+import { wishlistApi } from '../../../api/customerCommerceApi';
+import { useScreenTitle } from '../../../components/AppShell';
+import { Pagination } from '../../../components/Pagination';
+import { ProductCard } from '../../../components/ProductCard';
+import { SelectField } from '../../../components/SelectField';
 import {
   Alert,
   Button,
@@ -16,11 +16,11 @@ import {
   ErrorState,
   PageTitle,
   TextField,
-} from '../../components/ui';
-import { useApiResource } from '../../hooks/useApiResource';
-import { normalizePage } from '../../lib/commerce';
-import WheelPager, { type WheelPage } from '../../components/wheel/WheelPager';
-import { useAppTheme } from '../../ThemeProvider';
+} from '../../../components/ui';
+import { useApiResource } from '../../../hooks/useApiResource';
+import { normalizePage } from '../../../lib/commerce';
+import WheelPager, { type WheelPage } from '../../../components/wheel/WheelPager';
+import { useAppTheme } from '../../../ThemeProvider';
 
 const TYPES = [
   { value: '', label: 'All product types' },

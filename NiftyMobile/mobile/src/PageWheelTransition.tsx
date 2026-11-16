@@ -24,10 +24,6 @@ const EXIT_MS = 150;
 const ENTER_MS = 230;
 const MIN_EXIT_MS = 70;
 const FALLBACK_MS = 700;
-// true  = switching tabs REPLACES the screen (no pile-up, the fix).
-// false = switching tabs pushes a new screen (the old behaviour).
-// If the swipe stops working, set this to false.
-const REPLACE_TABS = true;
 
 type PageWheelTransitionValue = {
   /** 0 = at rest, ±1 = swung fully off screen. Shared by every screen. */
@@ -52,7 +48,6 @@ export function PageWheelTransitionProvider({ children }: PropsWithChildren) {
     if (!awaitingEnter.current) {
       return;
     }
-    console.log('[Wheel] start enter');
     awaitingEnter.current = false;
     if (fallbackTimer.current) {
       clearTimeout(fallbackTimer.current);
@@ -62,7 +57,6 @@ export function PageWheelTransitionProvider({ children }: PropsWithChildren) {
       0,
       { duration: ENTER_MS, easing: Easing.out(Easing.cubic) },
       () => {
-        console.log('[Wheel] enter finished');
         busy.value = false;
       },
     );
@@ -74,14 +68,8 @@ export function PageWheelTransitionProvider({ children }: PropsWithChildren) {
     (target: Href, direction: PageWheelDirection) => {
       awaitingEnter.current = true;
       turn.value = -direction;
-      console.log(
-        `[Wheel] commit -> ${String(target)} (${REPLACE_TABS ? 'replace' : 'navigate'})`,
-      );
-      if (REPLACE_TABS) {
-        router.replace(target);
-      } else {
-        router.navigate(target);
-      }
+      // Replace, don't push: switching tabs must not build up history.
+      router.replace(target);
       // Safety net in case the pathname never changes.
       fallbackTimer.current = setTimeout(startEnter, FALLBACK_MS);
     },
@@ -90,7 +78,6 @@ export function PageWheelTransitionProvider({ children }: PropsWithChildren) {
 
   // The new route is active: spin its page in.
   useEffect(() => {
-    console.log(`[Wheel] pathname = ${pathname}, waiting = ${awaitingEnter.current}`);
     if (!awaitingEnter.current) {
       return;
     }
@@ -118,10 +105,8 @@ export function PageWheelTransitionProvider({ children }: PropsWithChildren) {
   const go = useCallback(
     (target: Href, direction: PageWheelDirection) => {
       if (busy.value) {
-        console.log('[Wheel] go ignored (busy)');
         return;
       }
-      console.log(`[Wheel] go -> ${String(target)}`);
       busy.value = true;
       const distance = Math.abs(direction - turn.value);
       const duration = Math.max(MIN_EXIT_MS, EXIT_MS * Math.min(1, distance));

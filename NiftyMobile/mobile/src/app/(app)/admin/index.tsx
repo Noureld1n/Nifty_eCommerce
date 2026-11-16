@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { router } from 'expo-router';
-import { RequireRole } from '../../auth/RouteGuards';
-import { LoadingState } from '../../components/ui';
+import { RequireRole } from '../../../auth/RouteGuards';
+import { LoadingState } from '../../../components/ui';
 
 export default function AdminIndexScreen() {
   useEffect(() => {

@@ -1,5 +1,5 @@
-import { RequireRole } from '../../../auth/RouteGuards';
-import { OrderDetailSection } from '../../../components/account/CustomerSections';
+import { RequireRole } from '../../../../auth/RouteGuards';
+import { OrderDetailSection } from '../../../../components/account/CustomerSections';
 
 export default function OrderDetailScreen() {
   return (

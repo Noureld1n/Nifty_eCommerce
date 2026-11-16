@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
-import { authApi } from '../api/authApi';
-import { ApiError } from '../api/client';
-import { AuthLink, AuthScreen } from '../components/AuthScreen';
-import { Alert, LoadingState } from '../components/ui';
+import { authApi } from '../../api/authApi';
+import { ApiError } from '../../api/client';
+import { AuthLink, AuthScreen } from '../../components/AuthScreen';
+import { Alert, LoadingState } from '../../components/ui';
 
 export default function VerifyEmailScreen() {
   const { token } = useLocalSearchParams<{ token?: string }>();

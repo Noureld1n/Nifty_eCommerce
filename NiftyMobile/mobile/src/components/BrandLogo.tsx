@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { AccessibilityInfo, StyleSheet, Text, View } from 'react-native';
-import { useFocusEffect } from 'expo-router';
 import Animated, {
   cancelAnimation,
   Easing,
@@ -200,15 +199,6 @@ export function BrandLogo({ size = 42 }: { size?: number }) {
   const appleBob = useSharedValue(0);
   const twinkle = useSharedValue(1);
 
-  // A logo on a screen that is not on top is invisible: don't animate it.
-  const [focused, setFocused] = useState(true);
-  useFocusEffect(
-    useCallback(() => {
-      setFocused(true);
-      return () => setFocused(false);
-    }, []),
-  );
-
   useEffect(() => {
     let mounted = true;
     AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
@@ -244,12 +234,6 @@ export function BrandLogo({ size = 42 }: { size?: number }) {
       return;
     }
 
-    if (!focused) {
-      // Another screen is on top, so nobody can see this logo.
-      stop();
-      return;
-    }
-
     spin.value = withRepeat(
       withTiming(360, { duration: 12000, easing: Easing.linear }),
       -1,
@@ -273,7 +257,7 @@ export function BrandLogo({ size = 42 }: { size?: number }) {
       true,
     );
     return stop;
-  }, [appleBob, cycle, focused, reduceMotion, spin, twinkle]);
+  }, [appleBob, cycle, reduceMotion, spin, twinkle]);
 
   // Stepped copies of the clocks: dependents only recompute (and the SVG is
   // only redrawn) when a step changes, not on every single frame.

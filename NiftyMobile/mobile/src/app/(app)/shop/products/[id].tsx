@@ -1,17 +1,17 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useSession } from '../../../auth/useSession';
-import { catalogApi } from '../../../api/catalogApi';
+import { useSession } from '../../../../auth/useSession';
+import { catalogApi } from '../../../../api/catalogApi';
 import {
   cartApi,
   reviewApi,
   wishlistApi,
-} from '../../../api/customerCommerceApi';
-import type { ProductReview, ProductVariant } from '../../../api/commerceTypes';
-import { useScreenTitle } from '../../../components/AppShell';
-import { Pagination } from '../../../components/Pagination';
-import { SelectField } from '../../../components/SelectField';
+} from '../../../../api/customerCommerceApi';
+import type { ProductReview, ProductVariant } from '../../../../api/commerceTypes';
+import { useScreenTitle } from '../../../../components/AppShell';
+import { Pagination } from '../../../../components/Pagination';
+import { SelectField } from '../../../../components/SelectField';
 import {
   Alert,
   Button,
@@ -20,10 +20,10 @@ import {
   ErrorState,
   PageTitle,
   TextField,
-} from '../../../components/ui';
-import { useApiResource } from '../../../hooks/useApiResource';
-import { formatMoney, normalizePage, prettyStatus } from '../../../lib/commerce';
-import { useAppTheme } from '../../../ThemeProvider';
+} from '../../../../components/ui';
+import { useApiResource } from '../../../../hooks/useApiResource';
+import { formatMoney, normalizePage, prettyStatus } from '../../../../lib/commerce';
+import { useAppTheme } from '../../../../ThemeProvider';
 
 type ReviewDraft = {
   title: string;

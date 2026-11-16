@@ -1,10 +1,10 @@
 import { useLocalSearchParams } from 'expo-router';
 import { Text } from 'react-native';
-import { RequireRole } from '../../auth/RouteGuards';
-import { CustomerAppearance } from '../../components/account/CustomerAppearance';
-import { CUSTOMER_SECTIONS } from '../../components/account/CustomerSections';
-import { useScreenTitle } from '../../components/AppShell';
-import { Card } from '../../components/ui';
+import { RequireRole } from '../../../auth/RouteGuards';
+import { CustomerAppearance } from '../../../components/account/CustomerAppearance';
+import { CUSTOMER_SECTIONS } from '../../../components/account/CustomerSections';
+import { useScreenTitle } from '../../../components/AppShell';
+import { Card } from '../../../components/ui';
 
 const SECTIONS = {
   ...CUSTOMER_SECTIONS,

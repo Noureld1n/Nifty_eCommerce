@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type PropsWithChildren,
 } from 'react';
@@ -20,9 +21,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, usePathname, type Href } from 'expo-router';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
+  Easing,
+  FadeInDown,
+  FadeInUp,
+  ReduceMotion,
   runOnJS,
   useAnimatedStyle,
+  useSharedValue,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 import { useSession } from '../auth/useSession';
 import { useAppTheme } from '../ThemeProvider';
@@ -42,6 +49,30 @@ import { Alert, Button } from './ui';
 /* eslint-disable react-hooks/immutability */
 
 const AppShellTitleContext = createContext<(title: string) => void>(() => {});
+
+// Screens that live outside the shell. Going to one of them fades the shell
+// out first, so it never just vanishes in a single frame.
+const AUTH_ROUTES: string[] = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+];
+const LEAVE_MS = 200;
+// If we are still on screen this long after fading out (for example after a
+// log out that stays on the shop), fade back in.
+const RESTORE_MS = 700;
+
+// Entrance when the shell first appears (after login, or when the app opens).
+// The header drops in, the page rises in, then the navigation rises in.
+// It does NOT replay when you switch tabs: the shell stays mounted then.
+const ENTER_HEADER = FadeInDown.duration(300).reduceMotion(ReduceMotion.System);
+const ENTER_PAGE = FadeInDown.duration(340)
+  .delay(70)
+  .reduceMotion(ReduceMotion.System);
+const ENTER_NAV = FadeInUp.duration(300)
+  .delay(110)
+  .reduceMotion(ReduceMotion.System);
 
 /** Call this inside any page screen to update the persistent shell's title. */
 export function useScreenTitle(title: string) {
@@ -63,12 +94,24 @@ export function AppShell({
   const { turn, busy, go } = usePageWheelTransition();
   const styles = makeStyles(theme);
   const [stage, setStage] = useState({ width: 0, height: 0 });
+  // Only what we need from the ScrollView, so this compiles whichever way
+  // React Native types the ScrollView instance.
+  const scrollRef = useRef<{
+    scrollTo: (options: { x?: number; y?: number; animated?: boolean }) => void;
+  } | null>(null);
   const role = user?.role ?? null;
   const routes = useMemo(
     () => (role ? getRoleNavigationItems(role) : []),
     [role],
   );
   const activeIndex = role ? navigationIndexForPath(pathname, role) : -1;
+
+  // The ScrollView is shared by every page, so start each new page at the
+  // top. During a wheel transition the page is parked off screen at this
+  // moment, so the jump is never visible.
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, [pathname]);
 
   const stageWidth = Math.max(1, stage.width || windowWidth);
   const stageHeight = Math.max(1, stage.height || windowHeight);
@@ -87,8 +130,42 @@ export function AppShell({
     );
   }, []);
 
+  // 0 = shell fully visible, 1 = faded out.
+  const leaving = useSharedValue(0);
+  const leaveStyle = useAnimatedStyle(() => ({
+    opacity: 1 - leaving.value,
+    transform: [{ translateY: 12 * leaving.value }],
+  }));
+
+  // Fade the whole shell out, then run `after` (go to an auth screen, log
+  // out...). Ignored if a fade is already running.
+  const leaveThen = useCallback(
+    (after: () => void) => {
+      if (leaving.value > 0) {
+        return;
+      }
+      leaving.value = withTiming(
+        1,
+        { duration: LEAVE_MS, easing: Easing.in(Easing.quad) },
+        (finished) => {
+          if (finished) {
+            runOnJS(after)();
+          }
+        },
+      );
+      setTimeout(() => {
+        leaving.value = withTiming(0, { duration: 220 });
+      }, RESTORE_MS);
+    },
+    [leaving],
+  );
+
   const navigateToTab = useCallback(
     (target: Href) => {
+      if (AUTH_ROUTES.some((route) => String(target).startsWith(route))) {
+        leaveThen(() => router.navigate(target));
+        return;
+      }
       const targetIndex = routes.findIndex((item) => item.href === target);
       if (
         !role ||
@@ -101,7 +178,7 @@ export function AppShell({
       }
       go(target, targetIndex > activeIndex ? -1 : 1);
     },
-    [activeIndex, go, role, routes],
+    [activeIndex, go, leaveThen, role, routes],
   );
 
   const nextRoute =
@@ -167,7 +244,7 @@ export function AppShell({
 
   return (
     <AppShellTitleContext.Provider value={setTitle}>
-      <View style={styles.root}>
+      <Animated.View style={[styles.root, leaveStyle]}>
         <SafeAreaView
           style={styles.safeArea}
           edges={['top', 'left', 'right', 'bottom']}
@@ -176,7 +253,7 @@ export function AppShell({
             <View style={styles.accentLeaf} />
             <View style={styles.accentSky} />
           </View>
-          <View style={styles.header}>
+          <Animated.View entering={ENTER_HEADER} style={styles.header}>
             <Pressable
               accessibilityRole="link"
               accessibilityLabel="Nifty home"
@@ -197,16 +274,20 @@ export function AppShell({
                 <Button
                   title="Log out"
                   variant="ghost"
-                  onPress={() => void logout()}
+                  onPress={() => leaveThen(() => void logout())}
                 />
               </View>
             ) : null}
-          </View>
+          </Animated.View>
 
+          <Animated.View entering={ENTER_PAGE} style={styles.pageEntrance}>
           <GestureDetector gesture={pageGesture}>
             <View style={styles.stageClip} onLayout={onStageLayout}>
               <Animated.View style={[styles.stage, pageStyle]}>
                 <ScrollView
+                  ref={(instance) => {
+                    scrollRef.current = instance;
+                  }}
                   style={styles.scroll}
                   contentContainerStyle={styles.content}
                   keyboardShouldPersistTaps="handled"
@@ -222,10 +303,13 @@ export function AppShell({
               </Animated.View>
             </View>
           </GestureDetector>
+          </Animated.View>
 
-          <RoleNavigation role={role} onNavigate={navigateToTab} />
+          <Animated.View entering={ENTER_NAV}>
+            <RoleNavigation role={role} onNavigate={navigateToTab} />
+          </Animated.View>
         </SafeAreaView>
-      </View>
+      </Animated.View>
     </AppShellTitleContext.Provider>
   );
 }
@@ -281,6 +365,9 @@ function makeStyles(theme: ReturnType<typeof useAppTheme>['theme']) {
       fontSize: 9,
       fontWeight: '800',
       letterSpacing: 1,
+    },
+    pageEntrance: {
+      flex: 1,
     },
     stageClip: {
       flex: 1,
